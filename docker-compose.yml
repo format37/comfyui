@@ -1,0 +1,27 @@
+services:
+  comfyui:
+    image: mmartial/comfyui-nvidia-docker:ubuntu24_cuda12.6.3-latest
+    container_name: comfyui
+    ports:
+      - "8188:8188"
+    volumes:
+      - ./run:/comfy/mnt
+      - ./data:/basedir
+    restart: unless-stopped
+    environment:
+      - WANTED_UID=1000
+      - WANTED_GID=1000
+      - BASE_DIRECTORY=/basedir
+      - SECURITY_LEVEL=normal
+      - COMFY_CMDLINE_EXTRA=--preview-method auto
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        limits:
+          memory: 32G
+        reservations:
+          memory: 16G
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, compute, utility]

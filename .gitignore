@@ -1,0 +1,36 @@
+# ComfyUI data directories (large files, models, outputs)
+run/
+data/models/
+data/input/
+data/output/
+data/temp/
+
+# Keep directory structure
+!data/.gitkeep
+!data/models/.gitkeep
+!data/input/.gitkeep
+!data/output/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
