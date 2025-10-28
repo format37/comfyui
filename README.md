@@ -13,59 +13,13 @@ Quick setup for ComfyUI with Docker and NVIDIA GPU support for video style trans
 ### 1. Clone or create project directory
 
 ```bash
-mkdir -p ~/projects/comfy
-cd ~/projects/comfy
+git clone https://github.com/format37/comfyui.git
+cd comfyui
 ```
 
-### 2. Create directory structure
-
+### 2. Run the ComfyUI
 ```bash
-mkdir -p run data/{models,input,output,user,custom_nodes}
-```
-
-### 3. Create `docker-compose.yml`
-
-```yaml
-services:
-  comfyui:
-    image: mmartial/comfyui-nvidia-docker:ubuntu24_cuda12.6.3-latest
-    container_name: comfyui
-    ports:
-      - "8188:8188"
-    volumes:
-      - ./run:/comfy/mnt
-      - ./data:/basedir
-    restart: unless-stopped
-    environment:
-      - WANTED_UID=1000  # Change to your UID: id -u
-      - WANTED_GID=1000  # Change to your GID: id -g
-      - BASE_DIRECTORY=/basedir
-      - SECURITY_LEVEL=normal
-      - COMFY_CMDLINE_EXTRA=--preview-method auto
-      - NVIDIA_VISIBLE_DEVICES=all
-    deploy:
-      resources:
-        limits:
-          memory: 32G
-        reservations:
-          memory: 16G
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu, compute, utility]
-```
-
-### 4. Verify GPU access
-
-```bash
-docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi
-```
-
-### 5. Launch ComfyUI
-
-```bash
-docker compose up -d
-docker compose logs -f  # Monitor startup (first time: 5-10 minutes)
+./compose.sh
 ```
 
 **Access UI**: http://localhost:8188
@@ -160,17 +114,6 @@ id -g  # Your GID
 - Reduce batch size / frame count
 - Lower resolution (512×512 recommended)
 - Check VRAM: `nvidia-smi`
-
-### Container won't start
-
-```bash
-# Check logs
-docker compose logs
-
-# Rebuild
-docker compose down
-docker compose up -d
-```
 
 ## Notes
 
