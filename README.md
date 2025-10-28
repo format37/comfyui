@@ -24,28 +24,6 @@ cd comfyui
 
 **Access UI**: http://localhost:8188
 
-## Usage
-
-### Container Management
-
-```bash
-# Start
-docker compose up -d
-
-# Stop
-docker compose down
-
-# Restart
-docker compose restart
-
-# View logs
-docker compose logs -f
-
-# Update image
-docker compose pull
-docker compose up -d
-```
-
 ### Directory Structure
 
 ```
