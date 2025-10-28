@@ -1,9 +1,6 @@
 # ComfyUI data directories (large files, models, outputs)
 run/
-data/models/
-data/input/
-data/output/
-data/temp/
+data/
 
 # Keep directory structure
 !data/.gitkeep
