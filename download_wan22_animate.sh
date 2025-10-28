@@ -244,7 +244,7 @@ download_file_background \
     "LoRA: lightx2v_I2V_14B"
 
 download_file_background \
-    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/WanAnimate_relight_lora_fp16.safetensors" \
+    "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors" \
     "${LORA_DIR}/WanAnimate_relight_lora_fp16.safetensors" \
     "LoRA: WanAnimate_relight"
 
