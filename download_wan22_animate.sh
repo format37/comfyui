@@ -17,7 +17,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Base directory
-BASE_DIR="/home/alex/projects/comfyui/data"
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/data"
 
 # Model directories
 DIFFUSION_DIR="${BASE_DIR}/models/diffusion_models"
