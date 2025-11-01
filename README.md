@@ -70,6 +70,46 @@ Check these resources for ready-to-use workflows with model download instruction
 - Stable Video Diffusion (576×1024, 25 frames): <2 minutes
 - VRAM usage: 8-16GB typical (24GB available)
 
+## Optional: SageAttention Installation
+
+**SageAttention** is an optional performance optimization that can speed up attention mechanisms in diffusion models. It requires CUDA compilation (10-15 minutes) during first installation.
+
+### Installation Methods
+
+#### Option 1: Automatic (Recommended)
+Run the installation script while the container is running:
+
+```bash
+./install_sageattention.sh
+```
+
+Then enable it in `docker-compose.yml`:
+```yaml
+- COMFY_CMDLINE_EXTRA=--preview-method auto --cache-none --use-sage-attention
+```
+
+Restart the container:
+```bash
+docker compose restart
+```
+
+#### Option 2: Manual Installation
+
+```bash
+docker compose exec comfyui bash -c '
+cd /tmp
+git clone https://github.com/thu-ml/SageAttention.git
+cd SageAttention
+/comfy/mnt/venv/bin/python3 -m pip install . --no-build-isolation
+'
+```
+
+### Notes
+- ⏱️ Compilation takes 10-15 minutes
+- 🎯 Provides ~20-30% speedup for compatible models
+- ⚠️ Not required - ComfyUI works perfectly without it
+- 💡 ComfyUI will use standard PyTorch attention if not installed
+
 ## Troubleshooting
 
 ### Check GPU access in container
