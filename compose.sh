@@ -92,7 +92,7 @@ if docker compose ps | grep -q comfyui; then
 fi
 
 # Start in daemon mode
-docker compose up -d
+docker compose up -d --force-recreate --remove-orphans
 
 # Wait a moment for container to start
 sleep 2

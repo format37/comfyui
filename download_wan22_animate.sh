@@ -1,9 +1,10 @@
 #!/bin/bash
 
 ################################################################################
-# Wan2.2 Animate Model Downloader
-# Downloads all required models for Wan2.2 Animate workflow
-# GPU: 40xx+ (fp8_e4m3fn variants)
+# Wan2.2 Official Two-Pass Model Downloader
+# Downloads all required models for stable WAN 2.2 two-pass workflows
+# GPU: RTX 4090 (25GB VRAM) - fp8_scaled variants
+# Uses official Comfy-Org two-pass approach: high-noise + low-noise experts
 ################################################################################
 
 # Don't use set -e because we handle errors explicitly
@@ -43,8 +44,9 @@ declare -a DOWNLOAD_NAMES=()
 
 print_header() {
     echo -e "${BLUE}════════════════════════════════════════════════════════════════${NC}"
-    echo -e "${BLUE}  Wan2.2 Animate Model Downloader${NC}"
-    echo -e "${BLUE}  GPU: 40xx+ (fp8_e4m3fn variants)${NC}"
+    echo -e "${BLUE}  WAN 2.2 Official Two-Pass Model Downloader${NC}"
+    echo -e "${BLUE}  GPU: RTX 4090 (25GB VRAM) - fp8_scaled variants${NC}"
+    echo -e "${BLUE}  Two-pass approach: high-noise + low-noise experts${NC}"
     echo -e "${BLUE}════════════════════════════════════════════════════════════════${NC}"
     echo ""
 }
@@ -208,9 +210,14 @@ download_file_background \
     "Text Encoder: clip_l"
 
 download_file_background \
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" \
+    "${TEXT_ENCODER_DIR}/umt5_xxl_fp8_e4m3fn_scaled.safetensors" \
+    "Text Encoder: umt5_xxl_fp8 (Official WAN 2.2)"
+
+download_file_background \
     "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp16.safetensors" \
     "${TEXT_ENCODER_DIR}/umt5_xxl_fp16.safetensors" \
-    "Text Encoder: umt5_xxl_fp16"
+    "Text Encoder: umt5_xxl_fp16 (Legacy)"
 
 download_file_background \
     "https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t5xxl_fp16.safetensors" \
@@ -227,9 +234,14 @@ download_file_background \
 # Download VAE models
 echo -e "\n${BLUE}━━━ VAE Models ━━━${NC}"
 download_file_background \
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors" \
+    "${VAE_DIR}/wan_2.1_vae.safetensors" \
+    "VAE: wan_2.1_vae (Official WAN 2.2)"
+
+download_file_background \
     "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors" \
     "${VAE_DIR}/Wan2_1_VAE_bf16.safetensors" \
-    "VAE: Wan2_1_VAE_bf16"
+    "VAE: Wan2_1_VAE_bf16 (Legacy)"
 
 download_file_background \
     "https://huggingface.co/Comfy-Org/Lumina_Image_2.0_Repackaged/resolve/main/split_files/vae/ae.safetensors" \
@@ -252,22 +264,30 @@ download_file_background \
 wait_for_downloads
 
 # Download large diffusion models in parallel (these are HUGE)
-echo -e "\n${BLUE}━━━ Diffusion Models (Large - may take a while) ━━━${NC}"
+# Using official two-pass approach: high-noise + low-noise experts for stability
+echo -e "\n${BLUE}━━━ Diffusion Models - WAN 2.2 Two-Pass (Large - may take a while) ━━━${NC}"
+
+# Text-to-Video models (two-pass)
+download_file_background \
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors" \
+    "${DIFFUSION_DIR}/wan2.2_t2v_high_noise_14B_fp8_scaled.safetensors" \
+    "WAN 2.2 T2V High-Noise Expert (Official)"
 
 download_file_background \
-    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors" \
-    "${DIFFUSION_DIR}/Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors" \
-    "Wan2.2 Animate 14B (40xx+)"
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors" \
+    "${DIFFUSION_DIR}/wan2.2_t2v_low_noise_14B_fp8_scaled.safetensors" \
+    "WAN 2.2 T2V Low-Noise Expert (Official)"
+
+# Image-to-Video models (two-pass)
+download_file_background \
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors" \
+    "${DIFFUSION_DIR}/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors" \
+    "WAN 2.2 I2V High-Noise Expert (Official)"
 
 download_file_background \
-    "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/T2V/Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors" \
-    "${DIFFUSION_DIR}/Wan2_2-T2V-A14B-LOW_fp8_e4m3fn_scaled_KJ.safetensors" \
-    "Wan2.2 T2V Quality Improvement (40xx+)"
-
-download_file_background \
-    "https://huggingface.co/Comfy-Org/FLUX.1-Krea-dev_ComfyUI/resolve/main/split_files/diffusion_models/flux1-krea-dev_fp8_scaled.safetensors" \
-    "${DIFFUSION_DIR}/flux1-krea-dev_fp8_scaled.safetensors" \
-    "Flux Krea Dev (fp8_scaled)"
+    "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors" \
+    "${DIFFUSION_DIR}/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors" \
+    "WAN 2.2 I2V Low-Noise Expert (Official)"
 
 # Wait for all large model downloads
 wait_for_downloads
